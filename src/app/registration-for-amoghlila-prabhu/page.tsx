@@ -11,7 +11,7 @@ const Register_for_Event = () => {
         contact: string,
         email: string
     }
-
+    const [isloading, setisLoading] = useState(false)
     const [userData, setUserData] = useState<userDataFormat>({
         fullName: '',
         contact: '',
@@ -88,7 +88,6 @@ const Register_for_Event = () => {
     };
     const handleSubmit = async (e: any) => {
         e.preventDefault()
-        console.log("final Data", userData)
         const resp = await fetch('/api/getformdata', {
             method: "POST",
             body: JSON.stringify({ userData })
@@ -96,6 +95,7 @@ const Register_for_Event = () => {
 
         if (resp.ok) {
             payNow()
+            setisLoading(false)
         }
     }
     return (
@@ -107,21 +107,29 @@ const Register_for_Event = () => {
                     {/* Register the name */}
                     <fieldset className='border border-amber-50 rounded-4xl'>
                         <legend>Full Name <span className='text-red-600'>*</span></legend>
-                        <input type="text" className=' text-2xl ps-4 pb-2' name="fullName" value={userData.fullName} onChange={handleInput} required  />
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="fullName" value={userData.fullName} onChange={handleInput} required />
                     </fieldset>
                     {/* Register the Contact Number */}
                     <fieldset className='border border-amber-50 rounded-4xl my-3'>
                         <legend>Contact No <span className='text-red-600'>*</span></legend>
-                        <input type="text" className=' text-2xl ps-4 pb-2' name="contact" value={userData.contact} onChange={handleInput} required   />
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="contact" value={userData.contact} onChange={handleInput} required />
                     </fieldset>
                     {/* Register the Email */}
                     <fieldset className='border border-amber-50 rounded-4xl'>
                         <legend>Email <span className='text-red-600'>*</span></legend>
-                        <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required   />
+                        <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required />
                     </fieldset>
                     {/* Submit Button */}
-                        <button className='w-[100%] text-2xl ps-4 my-3 bg-amber-50 text-black rounded-4xl py-2'>Register Now</button>
-                        <p>Note : 100 Rs will be charged for registration</p>
+                    {isloading ? (
+                        <button className="w-[100%] text-2xl ps-4 my-3 bg-amber-50 text-black rounded-4xl py-2">
+                            Loading...
+                        </button>
+                    ) : (
+                        <button className="w-[100%] text-2xl ps-4 my-3 bg-amber-50 text-black rounded-4xl py-2">
+                            Register Now {isloading}
+                        </button>
+                    )}
+                    <p>Note : 100 Rs will be charged for registration</p>
                 </div>
             </form>
         </div>

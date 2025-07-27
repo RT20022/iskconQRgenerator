@@ -80,7 +80,16 @@ async function generateUniqueId(name, email) {
     await connectToDatabase();
     const lastUser = await User.findOne().sort({ userId: -1 }).limit(1);
     console.log(lastUser,"lastuserid ============<<<,", lastUser?.userID)
-    const nextUserId = lastUser?.userID ? lastUser.userId + 1 : 1; // If no users, start from 1
+    let nextUserId
+    if(!lastUser){
+        nextUserId = 1
+    }
+    else if(!lastUser?.userID){
+        nextUserId = 1
+    }
+    else{
+        nextUserId = lastUser.userID +1
+    }
     const data = `${name.toLowerCase().trim()}-${email.toLowerCase().trim()}-${nextUserId}`;
     const hashID = crypto.createHash('sha256').update(data).digest('hex');
     return {hashID,nextUserId} // 64-char hash
