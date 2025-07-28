@@ -5,8 +5,13 @@ const UserSchema = new mongoose.Schema({
   email: String,
   phone: String,
   qrCodeData: String, // This will store the value encoded in QR
-  scanned : String,
   userID : Number,
+  age: String,
+  Gender: String,
+  DOB: String,
+  Address: String,
+  School: String,
+  Class: String,
   createdAt: { type: Date, default: Date.now },
 });
 

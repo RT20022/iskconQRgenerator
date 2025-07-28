@@ -5,17 +5,19 @@ import { useState } from 'react'
 
 // 'use static'
 // color to be used  =  bg-pink-600
+const [isloading, setisLoading] = useState(false)
 const Register_for_Event = () => {
     interface userDataFormat {
         fullName: string,
         contact: string,
-        email: string
+        email: string,
+        Age:string
     }
-    const [isloading, setisLoading] = useState(false)
     const [userData, setUserData] = useState<userDataFormat>({
         fullName: '',
         contact: '',
-        email: ''
+        email: '',
+        Age:''
     })
     const handleInput = (e: any) => {
         setUserData((prev) => ({
@@ -115,6 +117,26 @@ const Register_for_Event = () => {
                         <input type="text" className=' text-2xl ps-4 pb-2' name="contact" value={userData.contact} onChange={handleInput} required />
                     </fieldset>
                     {/* Register the Email */}
+                    <fieldset className='border border-amber-50 rounded-4xl'>
+                        <legend>Email <span className='text-red-600'>*</span></legend>
+                        <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required />
+                    </fieldset>
+                    {/* Register the Age */}
+                    <fieldset className='border border-amber-50 rounded-4xl'>
+                        <legend>Age <span className='text-red-600'>*</span></legend>
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="age" value={userData.Age} onChange={handleInput} required />
+                    </fieldset>
+                    {/* Register the Address */}
+                    <fieldset className='border border-amber-50 rounded-4xl'>
+                        <legend>Email <span className='text-red-600'>*</span></legend>
+                        <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required />
+                    </fieldset>
+                    {/* Register the School */}
+                    <fieldset className='border border-amber-50 rounded-4xl'>
+                        <legend>Email <span className='text-red-600'>*</span></legend>
+                        <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required />
+                    </fieldset>
+                    {/* Register the Class */}
                     <fieldset className='border border-amber-50 rounded-4xl'>
                         <legend>Email <span className='text-red-600'>*</span></legend>
                         <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required />

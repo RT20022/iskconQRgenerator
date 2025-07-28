@@ -1,6 +1,7 @@
 'use client'
 
 import '@/app/registration-for-amoghlila-prabhu/registration.css'
+import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 // 'use static'
@@ -9,13 +10,26 @@ const Register_for_Event = () => {
     interface userDataFormat {
         fullName: string,
         contact: string,
-        email: string
+        email: string,
+        age: string,
+        Gender: string,
+        DOB: string,
+        Address: string,
+        School: string,
+        Class: string,
     }
 
     const [userData, setUserData] = useState<userDataFormat>({
         fullName: '',
         contact: '',
-        email: ''
+        email: '',
+        age: '',
+        Gender: '',
+        DOB: '',
+        Address: '',
+        School: '',
+        Class: ''
+
     })
     const handleInput = (e: any) => {
         setUserData((prev) => ({
@@ -56,8 +70,8 @@ const Register_for_Event = () => {
             key: `${process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || ''}`,
             amount: data.amount,
             currency: data.currency,
-            name: "Your App Name",
-            description: "Test Transaction",
+            name: "Iskcon",
+            description: "Register for UDAAN, Event by Amogh Lila Das",
             order_id: data.id,
             handler: async function (response: any) {
                 // 3. After success
@@ -72,7 +86,8 @@ const Register_for_Event = () => {
                     body: JSON.stringify(response),
                 });
 
-                alert("Payment Successful!");
+                // alert("Payment Successful!");
+                window.location.href = "/register-success-thankyou-page";
             },
             prefill: {
                 name: userData.fullName,
@@ -107,21 +122,75 @@ const Register_for_Event = () => {
                     {/* Register the name */}
                     <fieldset className='border border-amber-50 rounded-4xl'>
                         <legend>Full Name <span className='text-red-600'>*</span></legend>
-                        <input type="text" className=' text-2xl ps-4 pb-2' name="fullName" value={userData.fullName} onChange={handleInput} required  />
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="fullName" value={userData.fullName} onChange={handleInput} required />
                     </fieldset>
                     {/* Register the Contact Number */}
                     <fieldset className='border border-amber-50 rounded-4xl my-3'>
                         <legend>Contact No <span className='text-red-600'>*</span></legend>
-                        <input type="text" className=' text-2xl ps-4 pb-2' name="contact" value={userData.contact} onChange={handleInput} required   />
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="contact" value={userData.contact} onChange={handleInput} required />
                     </fieldset>
                     {/* Register the Email */}
                     <fieldset className='border border-amber-50 rounded-4xl'>
                         <legend>Email <span className='text-red-600'>*</span></legend>
-                        <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required   />
+                        <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required />
+                    </fieldset>
+                    {/* Register the Age */}
+                    <fieldset className='border border-amber-50 rounded-4xl mt-3'>
+                        <legend>Age <span className='text-red-600'>*</span></legend>
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="age" value={userData.age} onChange={handleInput} required />
+                    </fieldset>
+                    {/* Register the DOB */}
+                    <fieldset className='border border-amber-50 rounded-4xl my-3 bg-gray-900'>
+                        <legend>DOB <span className='text-red-600'>*</span></legend>
+                        <input type="date" className=' text-2xl ps-4 pb-2' name="DOB" value={userData.DOB} onChange={handleInput} required />
+                    </fieldset>
+                    <div className="mb-3 text-lg ">
+                        Gender<span className='text-red-600'>*</span> :
+                        <label className="ms-4 me-6">
+                            <input
+                                type="radio"
+                                name="Gender"
+                                value="Male"
+                                checked={userData.Gender === "Male"}
+                                onChange={handleInput}
+                                className="me-2"
+                                required
+                            />
+                            Male
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="Gender"
+                                value="Female"
+                                checked={userData.Gender === "Female"}
+                                onChange={handleInput}
+                                className="me-2"
+                                required
+                            />
+                            Female
+                        </label>
+                    </div>
+
+                    {/* Register the Address */}
+                    <fieldset className='border border-amber-50 rounded-4xl'>
+                        <legend>Address <span className='text-red-600'>*</span></legend>
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="Address" value={userData.Address} onChange={handleInput} required />
+                    </fieldset>
+                    {/* Register the School */}
+                    <fieldset className='border border-amber-50 rounded-4xl my-3'>
+                        <legend>School/Collage Name <span className='text-red-600'>*</span></legend>
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="School" value={userData.School} onChange={handleInput} required />
+                    </fieldset>
+                    {/* Register the class */}
+                    <fieldset className='border border-amber-50 rounded-4xl'>
+                        <legend>Class <span className='text-red-600'>*</span></legend>
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="Class" value={userData.Class} onChange={handleInput} required />
                     </fieldset>
                     {/* Submit Button */}
-                        <button className='w-[100%] text-2xl ps-4 my-3 bg-amber-50 text-black rounded-4xl py-2'>Register Now</button>
-                        <p>Note : 100 Rs will be charged for registration</p>
+                    <button className='w-[100%] text-2xl ps-4 my-3 bg-amber-50 text-black rounded-4xl py-2'>Register Now</button>
+                    {/* <p>Note : 100 Rs will be charged for registration</p> */}
                 </div>
             </form>
         </div>
