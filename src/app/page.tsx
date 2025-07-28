@@ -1,6 +1,6 @@
 'use client'
 
-import '@/app/registration-for-amoghlila-prabhu/registration.css'
+// import '@/app/registration-for-amoghlila-prabhu/registration.css'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
