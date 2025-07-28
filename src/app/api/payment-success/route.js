@@ -216,7 +216,7 @@ export async function POST(request) {
         console.log('Email sent:', info.response);
       }
     });
-    return NextResponse.redirect(new URL("/register-success-thankyou-page", request.url));
+    return NextResponse.json({ message: "payment Successfull" }, { status: 200 });
   } else {
     console.log("Payment verification failed");
     return NextResponse.json({ message: "Invalid signature" }, { status: 400 });

@@ -1,7 +1,6 @@
 'use client'
 
 // import '@/app/registration-for-amoghlila-prabhu/registration.css'
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 
 // 'use static'
@@ -18,7 +17,7 @@ const Register_for_Event = () => {
         School: string,
         Class: string,
     }
-
+    const [isLoading, setisLoading] = useState(false)
     const [userData, setUserData] = useState<userDataFormat>({
         fullName: '',
         contact: '',
@@ -48,6 +47,7 @@ const Register_for_Event = () => {
         });
     };
     const payNow = async () => {
+        setisLoading(true)
         const res = await loadScript("https://checkout.razorpay.com/v1/checkout.js");
         if (!res) {
             alert("Razorpay SDK failed to load. Are you online?");
@@ -78,7 +78,7 @@ const Register_for_Event = () => {
                 console.log("Payment success:", response);
                 response.userData = userData
                 // Send to your backend to verify
-                await fetch("/api/payment-success", {
+                let resp = await fetch("/api/payment-success", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -87,7 +87,10 @@ const Register_for_Event = () => {
                 });
 
                 // alert("Payment Successful!");
-                window.location.href = "/register-success-thankyou-page";
+                if (resp.ok) {
+                    setisLoading(false)
+                    window.location.href = "/register-success-thankyou-page";
+                }
             },
             prefill: {
                 name: userData.fullName,
@@ -189,7 +192,39 @@ const Register_for_Event = () => {
                         <input type="text" className=' text-2xl ps-4 pb-2' name="Class" value={userData.Class} onChange={handleInput} required />
                     </fieldset>
                     {/* Submit Button */}
-                    <button className='w-[100%] text-2xl ps-4 my-3 bg-amber-50 text-black rounded-4xl py-2'>Register Now</button>
+                    <button
+                        disabled={isLoading}
+                        className={`w-full text-2xl ps-4 my-3 rounded-4xl py-2 flex items-center justify-center gap-3 transition 
+    ${isLoading
+                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                : "bg-amber-50 text-black hover:bg-amber-100"
+                            }`}
+                    >
+                        {isLoading && (
+                            <svg
+                                className="animate-spin h-6 w-6 text-black"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                />
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                                />
+                            </svg>
+                        )}
+                        {isLoading ? "Processing..." : "Register Now"}
+                    </button>
+
                     {/* <p>Note : 100 Rs will be charged for registration</p> */}
                 </div>
             </form>
