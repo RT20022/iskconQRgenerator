@@ -106,7 +106,7 @@ const Register_for_Event = () => {
                     link.click();
                     document.body.removeChild(link);
                     setisLoading(false)
-                    // window.location.href = "/register-success-thankyou-page";
+                    window.location.href = "/register-success-thankyou-page";
                 }
             },
             prefill: {
