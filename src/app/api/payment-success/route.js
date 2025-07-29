@@ -216,7 +216,8 @@ export async function POST(request) {
         console.log('Email sent:', info.response);
       }
     });
-    return NextResponse.json({ message: "payment Successfull" }, { status: 200 });
+    const base64 = Buffer.from(pdfBuffer).toString('base64');
+return NextResponse.json({ message: "payment Successful", pdfBase64: base64 }, { status: 200 });
   } else {
     console.log("Payment verification failed");
     return NextResponse.json({ message: "Invalid signature" }, { status: 400 });

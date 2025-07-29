@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { type } from 'os';
 
 const UserSchema = new mongoose.Schema({
   fullname: String,
@@ -12,6 +13,7 @@ const UserSchema = new mongoose.Schema({
   Address: String,
   School: String,
   Class: String,
+  isScanner: {type:Boolean , default:false},
   createdAt: { type: Date, default: Date.now },
 });
 

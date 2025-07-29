@@ -88,8 +88,25 @@ const Register_for_Event = () => {
 
                 // alert("Payment Successful!");
                 if (resp.ok) {
+                    const data = await resp.json();
+                    console.log(data, "data here ==")
+                    // const blob = new Blob([Uint8Array.from(atob(data.pdfBase64), c => c.charCodeAt(0))], { type: "application/pdf" });
+                    // const url = URL.createObjectURL(blob);
+                    // const a = document.createElement("a");
+                    // a.href = url;
+                    // a.download = "ticket.pdf";
+                    // a.click();
+                    // URL.revokeObjectURL(url);
+                    // console.log(resp, "Rghav")
+
+                    const link = document.createElement("a");
+                    link.href = `data:application/pdf;base64,${data.pdfBase64}`;
+                    link.download = "receipt.pdf";
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
                     setisLoading(false)
-                    window.location.href = "/register-success-thankyou-page";
+                    // window.location.href = "/register-success-thankyou-page";
                 }
             },
             prefill: {
@@ -130,22 +147,22 @@ const Register_for_Event = () => {
                     {/* Register the Contact Number */}
                     <fieldset className='border border-amber-50 rounded-4xl my-3'>
                         <legend>Contact No <span className='text-red-600'>*</span></legend>
-                        <input type="text" className=' text-2xl ps-4 pb-2' name="contact" value={userData.contact} onChange={handleInput} required />
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="contact" value={userData.contact} onChange={handleInput}required />
                     </fieldset>
                     {/* Register the Email */}
                     <fieldset className='border border-amber-50 rounded-4xl'>
                         <legend>Email <span className='text-red-600'>*</span></legend>
-                        <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required />
+                        <input type="email" className=' text-2xl ps-4 pb-2' name="email" value={userData.email} onChange={handleInput} required/>
                     </fieldset>
                     {/* Register the Age */}
                     <fieldset className='border border-amber-50 rounded-4xl mt-3'>
                         <legend>Age <span className='text-red-600'>*</span></legend>
-                        <input type="text" className=' text-2xl ps-4 pb-2' name="age" value={userData.age} onChange={handleInput} required />
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="age" value={userData.age} onChange={handleInput}required />
                     </fieldset>
                     {/* Register the DOB */}
                     <fieldset className='border border-amber-50 rounded-4xl my-3 bg-gray-900'>
                         <legend>DOB <span className='text-red-600'>*</span></legend>
-                        <input type="date" className=' text-2xl ps-4 pb-2' name="DOB" value={userData.DOB} onChange={handleInput} required />
+                        <input type="date" className=' text-2xl ps-4 pb-2' name="DOB" value={userData.DOB} onChange={handleInput}required />
                     </fieldset>
                     <div className="mb-3 text-lg ">
                         Gender<span className='text-red-600'>*</span> :
@@ -157,7 +174,7 @@ const Register_for_Event = () => {
                                 checked={userData.Gender === "Male"}
                                 onChange={handleInput}
                                 className="me-2"
-                                required
+required
                             />
                             Male
                         </label>
@@ -170,7 +187,7 @@ const Register_for_Event = () => {
                                 checked={userData.Gender === "Female"}
                                 onChange={handleInput}
                                 className="me-2"
-                                required
+required
                             />
                             Female
                         </label>
@@ -179,12 +196,12 @@ const Register_for_Event = () => {
                     {/* Register the Address */}
                     <fieldset className='border border-amber-50 rounded-4xl'>
                         <legend>Address <span className='text-red-600'>*</span></legend>
-                        <input type="text" className=' text-2xl ps-4 pb-2' name="Address" value={userData.Address} onChange={handleInput} required />
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="Address" value={userData.Address} onChange={handleInput} required/>
                     </fieldset>
                     {/* Register the School */}
                     <fieldset className='border border-amber-50 rounded-4xl my-3'>
                         <legend>School/Collage Name <span className='text-red-600'>*</span></legend>
-                        <input type="text" className=' text-2xl ps-4 pb-2' name="School" value={userData.School} onChange={handleInput} required />
+                        <input type="text" className=' text-2xl ps-4 pb-2' name="School" value={userData.School} onChange={handleInput} required/>
                     </fieldset>
                     {/* Register the class */}
                     <fieldset className='border border-amber-50 rounded-4xl'>
