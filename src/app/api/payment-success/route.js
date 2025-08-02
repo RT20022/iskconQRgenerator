@@ -15,7 +15,7 @@ const nodemailer = require("nodemailer")
  * @returns {Promise<string>} - A base64 image Data URL of the QR code.
  */
 
-export async function generateQRPdf(data, username, usermail) {
+async function generateQRPdf(data, username, usermail) {
   // Load images
   const assetsPath = path.join(process.cwd(), 'src', 'assets');
   const topRightImgBuffer = fs.readFileSync(path.join(assetsPath, 'prabhu.png'));
