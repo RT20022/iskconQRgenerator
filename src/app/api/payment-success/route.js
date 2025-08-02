@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import { connectToDatabase } from "@/lib/mongodb";
 import User from "@/models/User";
+import fs from 'fs';
+import path from 'path';
 import QRCode from "qrcode";
 import { PDFDocument, rgb } from 'pdf-lib';
 const nodemailer = require("nodemailer")
@@ -13,68 +15,106 @@ const nodemailer = require("nodemailer")
  * @returns {Promise<string>} - A base64 image Data URL of the QR code.
  */
 
-async function generateQRPdf(data) {
-  // Generate QR code buffer
-  const qrBuffer = await QRCode.toBuffer(data);
+export async function generateQRPdf(data, username, usermail) {
+  // Load images
+  const assetsPath = path.join(process.cwd(), 'src', 'assets');
+  const topRightImgBuffer = fs.readFileSync(path.join(assetsPath, 'prabhu.png'));
+  const topLeftImgBuffer = fs.readFileSync(path.join(assetsPath, 'asr3.png'));
 
-  // Create a new PDF document
+  const qrBuffer = await QRCode.toBuffer(data);
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([400, 600]);
+  const { width: pageWidth, height: pageHeight } = page.getSize();
 
-  // Embed QR code image
-  const pngImage = await pdfDoc.embedPng(qrBuffer);
-  const scale = 1.8;
-  const { width, height } = pngImage.scale(scale);
+  // Embed images
+  const qrImage = await pdfDoc.embedPng(qrBuffer);
+  const topLeftImage = await pdfDoc.embedPng(topLeftImgBuffer);
+  const topRightImage = await pdfDoc.embedPng(topRightImgBuffer);
 
-  // Set up text layout variables
-  let y = 560;
-  const lineHeight = 22;
-
-  // Draw header
-  page.drawText('UDAAN - Entry Pass', {
-    x: 100,
-    y,
-    size: 20,
-    color: rgb(0.2, 0.4, 0.6),
+  // Draw border
+  page.drawRectangle({
+    x: 10,
+    y: 10,
+    width: pageWidth - 20,
+    height: pageHeight - 20,
+    borderColor: rgb(0.6, 0.2, 0.6),
+    borderWidth: 2,
+    color: rgb(1, 1, 1),
   });
 
-  y -= lineHeight * 1.5;
-  page.drawText('Event: UDAAN - Rise Beyond Limits', { x: 50, y, size: 14 });
-
-  y -= lineHeight;
-  page.drawText('Speaker: HG Amogh Lila Das', { x: 50, y, size: 14 });
-
-  y -= lineHeight;
-  page.drawText('Date: 5th October 2025', { x: 50, y, size: 14 });
-
-  y -= lineHeight;
-  page.drawText('Time: 3 P.M Onwards', { x: 50, y, size: 14 });
-
-  y -= lineHeight;
-  page.drawText('Venue: Malibu Gardens, Amritsar', { x: 50, y, size: 14 });
-
-  y -= lineHeight;
-  page.drawText('Please carry this pass at entry.', {
-    x: 50,
-    y,
-    size: 12,
-    color: rgb(1, 0, 0),
+  // Decorative images on top corners
+  page.drawImage(topLeftImage, {
+    x: 15,
+    y: pageHeight - 65,
+    width: 40,
+    height: 40,
   });
 
-  // Draw QR code centered below the text
-  const qrX = (400 - width) / 2;
-  const qrY = 100;
-  page.drawImage(pngImage, {
-    x: qrX,
-    y: qrY,
-    width,
-    height,
+  page.drawImage(topRightImage, {
+    x: pageWidth - 55,
+    y: pageHeight - 65,
+    width: 40,
+    height: 40,
   });
 
-  // Finalize the PDF and return
-  const pdfBytes = await pdfDoc.save();
-  return pdfBytes;
+  // Combined Event + User Info (one below another)
+  let y = pageHeight - 90;
+  const leftX = 30;
+  const lineHeight = 18;
+
+  const textItems = [
+    'Event: UDAAN - Rise Beyond Limits',
+    'Speaker: HG Amogh Lila Das',
+    'Date: 5th October 2025',
+    'Time: 3 P.M Onwards',
+    'Venue: Malibu Gardens, Amritsar',
+    `Name: ${username}`,
+    `Email: ${usermail}`,
+    `Amount Paid: 100 Rs`,
+    'Carry this pass at entry',
+  ];
+
+  const textColors = [
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0, 0, 0),
+    rgb(0.1, 0.1, 0.6),
+    rgb(0.1, 0.5, 0.2),
+    rgb(0.7, 0.1, 0.1),
+    rgb(1, 0, 0),
+  ];
+
+  for (let i = 0; i < textItems.length; i++) {
+    page.drawText(textItems[i], {
+      x: leftX,
+      y,
+      size: 12,
+      color: textColors[i],
+    });
+    y -= lineHeight;
+  }
+
+  // Draw QR in the bottom half centered
+  const halfHeight = pageHeight / 2;
+  const qrMaxHeight = halfHeight - 40;
+  const qrMaxWidth = pageWidth - 80;
+  const scale = Math.min(qrMaxWidth / qrImage.width, qrMaxHeight / qrImage.height);
+
+  const qrDisplayWidth = qrImage.width * scale;
+  const qrDisplayHeight = qrImage.height * scale;
+
+  page.drawImage(qrImage, {
+    x: (pageWidth - qrDisplayWidth) / 2,
+    y: 40,
+    width: qrDisplayWidth,
+    height: qrDisplayHeight,
+  });
+
+  return await pdfDoc.save();
 }
+
 
 async function generateUniqueId(name, email) {
   await connectToDatabase();
@@ -98,7 +138,7 @@ async function generateUniqueId(name, email) {
 async function generateQrCodeData(name, email) {
   try {
     let { hashID, nextUserId } = await generateUniqueId(name, email);
-    const pdfBuffer = await generateQRPdf(hashID);
+    const pdfBuffer = await generateQRPdf(hashID , name , email);
     // const qrDataUrl = await QRCode.toDataURL(text, {
     //     errorCorrectionLevel: "H", // High error correction
     //     width: 300,
