@@ -189,7 +189,7 @@ export async function POST(request) {
       service: 'gmail', // or your SMTP provider
       auth: {
         user: 'srigokulgaushala@gmail.com',
-        pass: 'oufo xbng evde fuxw', // Use App Password for Gmail
+        pass: process.env.GMAIL_APP_PASS, // Use App Password for Gmail
       },
     })
 

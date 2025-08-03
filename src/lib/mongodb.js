@@ -6,8 +6,5 @@ if (!MONGODB_URI) {
   throw new Error("Please define MONGODB_URI in your .env file");
 }
 export async function connectToDatabase() {
-     return mongoose.connect(MONGODB_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }).then((mongoose) => mongoose);
+     return mongoose.connect(MONGODB_URI).then((mongoose) => mongoose);
 }
