@@ -191,7 +191,7 @@ export async function POST(request) {
         user: 'srigokulgaushala@gmail.com',
         pass: 'oufo xbng evde fuxw', // Use App Password for Gmail
       },
-    });
+    })
 
     const mailOptions = {
       from: 'iskconsrigokulgaushalaevents@gmail.com',
