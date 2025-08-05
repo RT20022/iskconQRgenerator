@@ -7,6 +7,8 @@ import fs from 'fs';
 import path from 'path';
 import QRCode from "qrcode";
 import { PDFDocument, rgb } from 'pdf-lib';
+import { Resend } from 'resend';
+const resend = new Resend(process.env.RESEND_API_KEY);
 const nodemailer = require("nodemailer")
 
 /**
@@ -67,7 +69,8 @@ async function generateQRPdf(data, username, usermail) {
     'Speaker: HG Amogh Lila Das',
     'Date: 5th October 2025',
     'Time: 3 P.M Onwards',
-    'Venue: Malibu Gardens, Amritsar',
+    'Venue: Regalia - The Forest Resort',
+    "Verka Vallah Bypass Road, Amritsar",
     `Name: ${username}`,
     `Email: ${usermail}`,
     `Amount Paid: 100 Rs`,
@@ -75,6 +78,7 @@ async function generateQRPdf(data, username, usermail) {
   ];
 
   const textColors = [
+    rgb(0, 0, 0),
     rgb(0, 0, 0),
     rgb(0, 0, 0),
     rgb(0, 0, 0),
@@ -138,7 +142,7 @@ async function generateUniqueId(name, email) {
 async function generateQrCodeData(name, email) {
   try {
     let { hashID, nextUserId } = await generateUniqueId(name, email);
-    const pdfBuffer = await generateQRPdf(hashID , name , email);
+    const pdfBuffer = await generateQRPdf(hashID, name, email);
     // const qrDataUrl = await QRCode.toDataURL(text, {
     //     errorCorrectionLevel: "H", // High error correction
     //     width: 300,
@@ -184,20 +188,7 @@ export async function POST(request) {
     });
 
 
-
-    const transporter = nodemailer.createTransport({
-      service: 'gmail', // or your SMTP provider
-      auth: {
-        user: 'srigokulgaushala@gmail.com',
-        pass: process.env.GMAIL_APP_PASS, // Use App Password for Gmail
-      },
-    })
-
-    const mailOptions = {
-      from: 'iskconsrigokulgaushalaevents@gmail.com',
-      to: body.userData.email,
-      subject: "🎉 You're Registered for UDAAN with HG Amogh Lila Das!",
-      html: `
+    const emailHtml = `
   <div style="font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; color: #333;">
     <div style="max-width: 600px; margin: auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
       <h2 style="text-align: center; color: #4B0082;">🎉 Congratulations! 🎉</h2>
@@ -205,7 +196,7 @@ export async function POST(request) {
       
       <p style="font-size: 16px;">
         We are excited to welcome you on <strong>5th October 2025</strong> at 
-        <strong>Malibu Gardens, Amritsar</strong>.
+        <strong>Regalia - The Forest Resort , Verka Vallah Bypass Road, Amritsar</strong>.
       </p>
       
       <p style="text-align: center; font-size: 18px; margin: 20px 0; color: #006400;">
@@ -218,7 +209,7 @@ export async function POST(request) {
       <ul style="font-size: 16px; line-height: 1.6;">
         <li><strong>Date:</strong> 5 October 2025</li>
         <li><strong>Timing :</strong> 3 P.M. Onwards</li>
-        <li><strong>Venue:</strong> Malibu Gardens, Amritsar</li>
+        <li><strong>Venue:</strong> Regalia - The Forest Resort , Verka Vallah Bypass Road, Amritsar</li>
         <li><strong>What You Will Get:</strong> Inspiring Talk | Electrifying Kirtan | Delicious Prasadam</li>
       </ul>
 
@@ -240,24 +231,52 @@ export async function POST(request) {
       </p>
     </div>
   </div>
-`,
+`
+    const base64 = Buffer.from(pdfBuffer).toString('base64');
+    const response = await resend.emails.send({
+      from: 'Iskcon Sri Gokul Gaushala <events@iskconsrigokulgaushala.com>',
+      to: body.userData.email,
+      subject: "🎉 You're Registered for UDAAN with HG Amogh Lila Das!",
+      html: emailHtml,
       attachments: [
         {
           filename: 'UDAAN-EntryPass.pdf',
-          content: pdfBuffer,
+          content: base64,
           contentType: 'application/pdf',
         },
       ],
-    };
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error('Error sending email:', error);
-      } else {
-        console.log('Email sent:', info.response);
-      }
-    });
-    const base64 = Buffer.from(pdfBuffer).toString('base64');
-return NextResponse.json({ message: "payment Successful", pdfBase64: base64 }, { status: 200 });
+    })
+    console.log(response , "Email response data");
+
+    // const transporter = nodemailer.createTransport({
+    //   service: 'gmail', // or your SMTP provider
+    //   auth: {
+    //     user: 'srigokulgaushala@gmail.com',
+    //     pass: process.env.GMAIL_APP_PASS, // Use App Password for Gmail
+    //   },
+    // })
+
+    // const mailOptions = {
+    //   from: 'iskconsrigokulgaushalaevents@gmail.com',
+    //   to: body.userData.email,
+    //   subject: "🎉 You're Registered for UDAAN with HG Amogh Lila Das!",
+    //   attachments: [
+    //     {
+    //       filename: 'UDAAN-EntryPass.pdf',
+    //       content: pdfBuffer,
+    //       contentType: 'application/pdf',
+    //     },
+    //   ],
+    // };
+    // transporter.sendMail(mailOptions, (error, info) => {
+    //   if (error) {
+    //     console.error('Error sending email:', error);
+    //   } else {
+    //     console.log('Email sent:', info.response);
+    //   }
+    // });
+    // const base64 = Buffer.from(pdfBuffer).toString('base64');
+    return NextResponse.json({ message: "payment Successful", pdfBase64: base64 }, { status: 200 });
   } else {
     console.log("Payment verification failed");
     return NextResponse.json({ message: "Invalid signature" }, { status: 400 });
