@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #e7c647;
+  --foreground: #a13137;
 }
 
 @theme inline {
@@ -14,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #e7c647;
+    --foreground: #a13137;
   }
 }
 
@@ -25,6 +25,6 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-input{
+input {
   outline: none;
 }
