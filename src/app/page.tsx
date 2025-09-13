@@ -145,7 +145,6 @@ const Register_for_Event = () => {
         <>
             <div>
                 {/* Fixed Whatsapp icon */}
-                <a href="https://chat.whatsapp.com/KpqLYmTYNZII1WfZvIKToh?mode=ems_copy_c"><Image width={50} src="/whatsapp.png" height={50}  alt='' className='fixed bottom-9 right-2.5' /><Image width={50} src="/whatsapp.png" height={50}  alt='' className='fixed bottom-9 right-2.5' /></a>
                 <div className='box-border'>
                     {/* Bannner */}
                     <Image width={1000} src="/udaan.jpeg" height={100} className='w-[100vw] rounded-4xl p-2' alt='' />
