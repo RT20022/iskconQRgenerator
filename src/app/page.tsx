@@ -4,8 +4,8 @@
 import { useState } from 'react'
 import { Toaster, toast } from 'react-hot-toast'
 import Image from 'next/image'
-import { Poppins } from 'next/font/google'
-const poppins = Poppins({
+import { Montserrat } from 'next/font/google'
+const poppins = Montserrat({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"], // Light → Bold
 });
@@ -151,8 +151,8 @@ const Register_for_Event = () => {
                 {/* Fixed Whatsapp icon */}
                 <div className='box-border'>
                     {/* Bannner */}
-                  
-                    <div className="flex justify-center items-center min-h-screen" suppressHydrationWarning={true}>
+                    <Image width={1000} src="/udaan.png" height={100} className='w-[100vw] rounded-4xl p-2' alt='' />
+                    <div className={`flex justify-center items-center min-h-screen ${poppins.className}`} suppressHydrationWarning={true}>
                         <form action="" onSubmit={handleSubmit} className='flex justify-center items-center flex-col py-6 w-[90vw]'>
                             <h2 className="text-4xl">Register Now</h2>
                             <p className='mb-5 mt-2'><strong>UDAAN</strong>- Rise Before Limits</p>
