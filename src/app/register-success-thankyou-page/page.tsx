@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 const ThankYouPage = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-pink-50 to-purple-100 flex items-center justify-center p-4">
@@ -28,6 +30,11 @@ const ThankYouPage = () => {
         >
           iskconsrigokulgaushalaevents@gmail.com
         </a>
+
+        {/* Email Note */}
+        <p className="text-md sm:text-lg text-gray-600 mb-4 mt-3">
+         <div className="text-green-700 font-medium"><a href="https://chat.whatsapp.com/KpqLYmTYNZII1WfZvIKToh?mode=ems_copy_c">Click here to join <Image width={30} src="/whatsapp.png" height={30}  alt='' className='inline' /> for more details.</a></div>
+        </p>
       </div>
     </div>
   );
