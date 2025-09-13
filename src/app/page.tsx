@@ -147,7 +147,7 @@ const Register_for_Event = () => {
     }
     return (
         <>
-            <div className={poppins.className}>
+            <div>
                 {/* Fixed Whatsapp icon */}
                 <div className='box-border'>
                     {/* Bannner */}
