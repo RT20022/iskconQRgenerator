@@ -18,106 +18,68 @@ const nodemailer = require("nodemailer")
  */
 
 async function generateQRPdf(data, username, usermail) {
-  // Load images
-  const assetsPath = path.join(process.cwd(), 'src', 'assets');
-  const topRightImgBuffer = fs.readFileSync(path.join(assetsPath, 'prabhu.png'));
-  const topLeftImgBuffer = fs.readFileSync(path.join(assetsPath, 'asr3.png'));
+  const assetsPath = path.join(process.cwd(), "src", "assets");
+  const backgroundImgBuffer = fs.readFileSync(path.join(assetsPath, "template.png"));
 
+  // Generate QR code
   const qrBuffer = await QRCode.toBuffer(data);
+
+  // Create PDF
   const pdfDoc = await PDFDocument.create();
   const page = pdfDoc.addPage([400, 600]);
   const { width: pageWidth, height: pageHeight } = page.getSize();
 
   // Embed images
   const qrImage = await pdfDoc.embedPng(qrBuffer);
-  const topLeftImage = await pdfDoc.embedPng(topLeftImgBuffer);
-  const topRightImage = await pdfDoc.embedPng(topRightImgBuffer);
+  const backgroundImage = await pdfDoc.embedPng(backgroundImgBuffer);
 
-  // Draw border
-  page.drawRectangle({
-    x: 10,
-    y: 10,
-    width: pageWidth - 20,
-    height: pageHeight - 20,
-    borderColor: rgb(0.6, 0.2, 0.6),
-    borderWidth: 2,
-    color: rgb(1, 1, 1),
+  // Draw background full page
+  page.drawImage(backgroundImage, {
+    x: 0,
+    y: 0,
+    width: pageWidth,
+    height: pageHeight,
   });
 
-  // Decorative images on top corners
-  page.drawImage(topLeftImage, {
-    x: 15,
-    y: pageHeight - 65,
-    width: 40,
-    height: 40,
-  });
-
-  page.drawImage(topRightImage, {
-    x: pageWidth - 55,
-    y: pageHeight - 65,
-    width: 40,
-    height: 40,
-  });
-
-  // Combined Event + User Info (one below another)
-  let y = pageHeight - 90;
-  const leftX = 30;
-  const lineHeight = 18;
-
-  const textItems = [
-    'Event: UDAAN - Rise Beyond Limits',
-    'Speaker: HG Amogh Lila Das',
-    'Date: 5th October 2025',
-    'Time: 3 P.M Onwards',
-    'Venue: Regalia - The Forest Resort',
-    "Verka Vallah Bypass Road, Amritsar",
-    `Name: ${username}`,
-    `Email: ${usermail}`,
-    `Amount Paid: 100 Rs`,
-    'Carry this pass at entry',
-  ];
-
-  const textColors = [
-    rgb(0, 0, 0),
-    rgb(0, 0, 0),
-    rgb(0, 0, 0),
-    rgb(0, 0, 0),
-    rgb(0, 0, 0),
-    rgb(0, 0, 0),
-    rgb(0.1, 0.1, 0.6),
-    rgb(0.1, 0.5, 0.2),
-    rgb(0.7, 0.1, 0.1),
-    rgb(1, 0, 0),
-  ];
-
-  for (let i = 0; i < textItems.length; i++) {
-    page.drawText(textItems[i], {
-      x: leftX,
-      y,
-      size: 12,
-      color: textColors[i],
-    });
-    y -= lineHeight;
-  }
-
-  // Draw QR in the bottom half centered
-  const halfHeight = pageHeight / 2;
-  const qrMaxHeight = halfHeight - 40;
-  const qrMaxWidth = pageWidth - 80;
-  const scale = Math.min(qrMaxWidth / qrImage.width, qrMaxHeight / qrImage.height);
+  // Draw QR code (center in blank area)
+  const qrMaxSize = 200; // adjust size as needed
+  const scale = Math.min(qrMaxSize / qrImage.width, qrMaxSize / qrImage.height);
 
   const qrDisplayWidth = qrImage.width * scale;
   const qrDisplayHeight = qrImage.height * scale;
 
+  const qrX = (pageWidth - qrDisplayWidth) / 2;
+  const qrY = (pageHeight / 2 - qrDisplayHeight / 2) - 25;
+
+
   page.drawImage(qrImage, {
-    x: (pageWidth - qrDisplayWidth) / 2,
-    y: 40,
+    x: qrX,
+    y: qrY,
     width: qrDisplayWidth,
     height: qrDisplayHeight,
   });
 
+  // Add only Name & Email just below QR
+  const textY = qrY - 40; // 40px below QR
+  const textX = 60;
+
+  page.drawText(`Name: ${username}`, {
+    x: textX,
+    y: textY,
+    size: 14,
+    color: rgb(1, 1, 1), // white text
+  });
+
+  page.drawText(`Email: ${usermail}`, {
+    x: textX,
+    y: textY - 20,
+    size: 14,
+    color: rgb(1, 1, 1),
+  });
+
   return await pdfDoc.save();
 }
+
 
 
 async function generateUniqueId(name, email) {
@@ -161,7 +123,8 @@ async function generateQrCodeData(name, email) {
 
 
 export async function POST(request) {
-  const body = await request.json();
+  try {
+    const body = await request.json();
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body;
   const bodyString = razorpay_order_id + "|" + razorpay_payment_id;
   const expectedSignature = crypto
@@ -246,7 +209,7 @@ export async function POST(request) {
         },
       ],
     })
-    console.log(response , "Email response data");
+    console.log(response, "Email response data");
 
     // const transporter = nodemailer.createTransport({
     //   service: 'gmail', // or your SMTP provider
@@ -280,5 +243,8 @@ export async function POST(request) {
   } else {
     console.log("Payment verification failed");
     return NextResponse.json({ message: "Invalid signature" }, { status: 400 });
+  }
+  } catch (error) {
+    return NextResponse.json({ message: "Try again Later" }, { status: 400 });
   }
 }

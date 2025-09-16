@@ -114,6 +114,10 @@ const Register_for_Event = () => {
                     setisLoading(false)
                     window.location.href = "/register-success-thankyou-page";
                 }
+                else{
+                    setisLoading(false)
+                    toast.error("Please try after some time ⏳...");
+                }
             },
             prefill: {
                 name: userData.fullName,

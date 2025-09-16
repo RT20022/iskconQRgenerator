@@ -28,7 +28,7 @@ const ThankYouPage = () => {
           href="mailto:iskconsrigokulgaushalaevents@gmail.com"
           className="text-blue-700 underline font-medium mt-1 inline-block break-all"
         >
-          iskconsrigokulgaushalaevents@gmail.com
+          srigokulgaushala@gmail.com
         </a>
 
         {/* Email Note */}
