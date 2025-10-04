@@ -1,13 +1,13 @@
 'use client'
 
 // import '@/app/registration-for-amoghlila-prabhu/registration.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Toaster, toast } from 'react-hot-toast'
 import Image from 'next/image'
 import { Montserrat } from 'next/font/google'
 const poppins = Montserrat({
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"], // Light → Bold
+    subsets: ["latin"],
+    weight: ["300", "400", "500", "600", "700"], // Light → Bold
 });
 // 'use static'
 // color to be used  =  bg-pink-600
@@ -36,14 +36,18 @@ const Register_for_Event = () => {
         Class: ''
 
     })
-    const [showForm,setShowForm] = useState(false)
-    const domain =  window.location.hostname
-    if(domain.includes("staging")){
-        setShowForm(true)
-    }
-    else{
-        setShowForm(false)
-    }
+    const [showForm, setShowForm] = useState(false)
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const domain = window.location.hostname
+            if (domain.includes("staging")) {
+                setShowForm(true)
+            }
+            else {
+                setShowForm(false)
+            }
+        }
+    }, [])
     const handleInput = (e: any) => {
         setUserData((prev) => ({
             ...prev,
@@ -122,7 +126,7 @@ const Register_for_Event = () => {
                     setisLoading(false)
                     window.location.href = "/register-success-thankyou-page";
                 }
-                else{
+                else {
                     setisLoading(false)
                     toast.error("Please try after some time ⏳...");
                 }
