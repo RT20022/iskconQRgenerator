@@ -1,0 +1,76 @@
+https://github.com/RT20022/iskconQRgenerator.git 
+https://github.com/RT20022/stagingIskconQR.git
+
+
+
+{
+  "info": {
+    "name": "Razorpay Payments",
+    "_postman_id": "f1e7cda3-1234-5678-9abc-razorpay-demo",
+    "description": "Fetch Razorpay payments and filter by description",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get All Payments",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://api.razorpay.com/v1/payments?count=100",
+          "protocol": "https",
+          "host": ["api", "razorpay", "com"],
+          "path": ["v1", "payments"],
+          "query": [
+            {
+              "key": "count",
+              "value": "100"
+            }
+          ]
+        },
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{RAZORPAY_KEY_ID}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{RAZORPAY_KEY_SECRET}}",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let data = pm.response.json();",
+              "let filtered = data.items.filter(p => p.description === \"Register for UDAAN, Event by Amogh Lila Das\");",
+              "console.log(\"Filtered Payments:\", filtered);",
+              "pm.test(\"Found payments with matching description\", function () {",
+              "    pm.expect(filtered.length).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "RAZORPAY_KEY_ID",
+      "value": "rzp_live_eXSZqQDXrlIAzc"
+    },
+    {
+      "key": "RAZORPAY_KEY_SECRET",
+      "value": "e8F70jDYeehg1aXxanmmyhoU"
+    }
+  ]
+}
