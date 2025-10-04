@@ -12,9 +12,9 @@ export async function POST(req) {
   const body = await req.json();
 
   const options = {
-    amount: 10000, // ₹100 in paise
+    amount: 20000, // ₹200 in paise
     currency: "INR",
-    receipt: `receipt_order_${Math.random() * 1000}`,
+    receipt: `receipt_order_${Math.random() * 2000}`,
   };
 
   try {
