@@ -169,7 +169,7 @@ const Register_for_Event = () => {
                     {/* Bannner */}
                     <Image width={1000} src="/udaan.png" height={100} className='w-[100vw] rounded-4xl p-2' alt='' />
                     <div className={`flex justify-center items-center min-h-screen ${poppins.className}`} suppressHydrationWarning={true}>
-                        {showForm && <div><h1 className='text-xl'>We are no longer accepting online registrations.</h1></div>}
+                        {!showForm && <div><h1 className='text-xl'>We are no longer accepting online registrations.</h1></div>}
 
                         {showForm && <form action="" onSubmit={handleSubmit} className='flex justify-center items-center flex-col py-6 w-[90vw]'>
                             <h2 className="text-4xl">Register Now</h2>
